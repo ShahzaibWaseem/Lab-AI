@@ -1,1 +1,1 @@
-# Lab-AI
+# Lab Artificial Intelligence
