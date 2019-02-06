@@ -1,5 +1,6 @@
 # Lab 01: Introduction to Python
 (CS188 Assignment)
+
 Download Files from: [tutorial.zip](https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/tutorial/v1/001/tutorial.zip)
 
 ## Tasks
