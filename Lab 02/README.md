@@ -1,5 +1,8 @@
 # Lab 02: Problem Solving by Searching
 (CS188 Assignment)
+
+Pacman Game
+
 Download Files from: [search.zip](https://s3-us-west-2.amazonaws.com/cs188websitecontent/projects/release/search/v1/001/search.zip)
 
 ## Tasks
