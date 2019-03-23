@@ -7,11 +7,13 @@ Implement the Following. From the Paper: [**Samuel, D., & Samuel, I. (2010). Nov
 - Calculate the height and width of each cell and use this value to obtain the cell size.
 - Count the number of black pixels in each cell.
 - Divide cell size by the number of black pixels.
+
 	The feature extracted constitutes the set of the first feature (F1).
 
 2. Calculate the angle of inclination of each sub-image centre in each cell to lower right corner of the cell.
 - Locate the centre of each of the 64 sub-image cells using equations below.
 - Calculate the angle that each centre point makes with the lower right corner of the cell.
+
 	The features extracted constitutes the set of the second feature (F2).
 
 	x' = 1/N &Sum;<sup>N</sup><sub>i=1</sub> x(i)
