@@ -1,8 +1,13 @@
 """
-Task 6: Normalization
+Task 6: Black Pixels
 """
-def Normalization(image, left, right, top, bottom, transitions):
-	width = right - left
-	height = bottom - top
+def blackPixels(image, left, right, top, bottom):
+	blackCount = 0
 
-	return (width * height) / transitions
+	for x in range(left, right):
+		for y in range(top, bottom):
+			currentPixel = image[y, x]
+			if (currentPixel == 0):
+				blackCount += 1
+
+	return blackCount

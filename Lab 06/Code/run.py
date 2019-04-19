@@ -1,106 +1,77 @@
-import cv2
-import os, shutil			# For Directory Management
-import matplotlib.pyplot as plt
-import Task0, Task1, Task2, Task3, Task4, Task5, Task6, Task7
+import cv2, math
+import Task0, Task1, Task2, Task4, Task5, Task6
 
-# Deletes the Directory where Text Files are saved
-# To avoid updating the txt files while appending text
-def CleaningDirectories(path):
-	if os.path.exists(path):
-		shutil.rmtree(path)
+rectangles = []
+
+transitions = []
+ratios = []
+centroids = []
+normalized = []		# Feature 1
+angles = []			# Feature 2
 
 """
 Splitting Image
 """
 def SplittingRecursive(image, left, right, top, bottom, depth=0):
-	cx, cy = Task2.FindCentroid(image, left, right, top, bottom)
+	cx, cy, n = Task2.FindCentroid(image, left, right, top, bottom)
 
 	if depth < 3:
-		SplittingRecursive(image, left, cy, top, cx, depth + 1)		# Top Left
-		SplittingRecursive(image, cy, right, top, cx, depth + 1)	# Bottom Left
-		SplittingRecursive(image, left, cy, cx, bottom, depth + 1)	# Top Right
-		SplittingRecursive(image, cy, right, cx, bottom, depth + 1)	# Bottom Right
+		SplittingRecursive(image, left, cx, top, cy, depth + 1)			# Top Left
+		SplittingRecursive(image, cx, right, top, cy, depth + 1)		# Bottom Left
+		SplittingRecursive(image, left, cx, cy, bottom, depth + 1)		# Top Right
+		SplittingRecursive(image, cx, right, cy, bottom, depth + 1)		# Bottom Right
 	else:
-		t = Task4.B2W_Transitions(image, left, right, top, bottom)
-		r = Task5.AspectRatio(left, right, top, bottom)
+		rectangles.append([(left, top), (right, bottom)])
+		transitions.append(Task4.B2W_Transitions(image[top:bottom, left:right]))
+		ratios.append(Task5.AspectRatio(left, right, top, bottom))
 
-		feature1 = Task6.Normalization(image, left, right, top, bottom, t)
+		# Task 6
+		size = (bottom-top)*(right-left)
+		blacks = Task6.blackPixels(image, left, right, top, bottom)
 
-		feature2 = Task7.AngleOfInclination(image, left, right, top, bottom, cx, cy)
+		try:
+			normalized.append(size/blacks)
+		except:
+			normalized.append(0)
 
-		filePath = "../Text/"
-		# If Path Does not exists; Create it
-		if not os.path.exists(filePath):
-			os.makedirs(filePath + "Transitions/")
-			os.makedirs(filePath + "Ratios/")
-			os.makedirs(filePath + "Centroids/")
-			os.makedirs(filePath + "Feature1/")
-			os.makedirs(filePath + "Feature2/")
+		cx, cy, n = Task2.FindCentroid(image[top:bottom, left:right], 0, right-left, 0, bottom-top)
+		centroids.append((cx, cy))
 
-		TransitionsFile = open(filePath + "Transitions/" + "signature.txt", "a")
-		TransitionsFile.write(str(t) + "\n")
-		TransitionsFile.close()
-
-		RatiosFile = open(filePath + "Ratios/" + "signature.txt", "a")
-		RatiosFile.write(str(r) + "\n")
-		RatiosFile.close()
-
-		CentroidsFile = open(filePath + "Centroids/" + "signature.txt", "a")
-		CentroidsFile.write(str(cx) + "," + str(cy) + "\n")
-		CentroidsFile.close()
-
-		Feature1File = open(filePath + "Feature1/" + "signature.txt", "a")
-		Feature1File.write(str(feature1) + "\n")
-		Feature1File.close()
-
-		Feature2File = open(filePath + "Feature2/" + "signature.txt", "a")
-		Feature2File.write(str(feature2) + "\n")
-		Feature2File.close()
-
-	return cv2.rectangle(bin_image, (top, left), (bottom, right), (0,255,0), 1)
+		# Task 7
+		angle = math.degrees(math.acos((bottom-top - cy)/(math.sqrt((right-left - cx)**2 + (bottom-top - cy)**2))))
+		angles.append(angle)
 
 path = "../Images/"
 filename = "signature.jpg"
-
+TEXT_FILES_PATH = "../Text/"
 # Opening Image
 if len(filename.split('.')) == 2:
 	image = cv2.imread(path + filename, 0)
 
-# Task 0
-filename = path + "bin_" + filename
 bin_image = Task0.Binarization(image, filename)
 
-filename = filename.split('/')[-1]
-# Task 1
 height, width = bin_image.shape
-filename = path + "box_" + filename
 top, bottom, left, right = Task1.BoundingBox(bin_image, height, width)
-bounding_box_image = cv2.rectangle(bin_image, (top, left), (bottom, right), (0,255,0), 3)
 
-cv2.imwrite(filename, bounding_box_image)
-B = (left, right, top, bottom)
+SplittingRecursive(bin_image, left, right, top, bottom, 0)
 
-filename = filename.split('/')[-1]
-# Task 2
-filename = path + "cen_" + filename
-cx, cy = Task2.FindCentroid(bin_image, 0, bin_image.shape[1], 0, bin_image.shape[0])
-centroid_image = cv2.circle(bounding_box_image, (cy, cx), 10, 200, -1)
+centroidFile = open(TEXT_FILES_PATH + "Centroids/" + filename.split('.')[0] + ".txt", "w")
+transitionsFile = open(TEXT_FILES_PATH + "Transitions/" + filename.split('.')[0] + ".txt", "w")
+ratiosFile = open(TEXT_FILES_PATH + "Ratios/" + filename.split('.')[0] + ".txt", "w")
+feature1File = open(TEXT_FILES_PATH + "Feature1/" + filename.split('.')[0] + ".txt", "w")
+feature2File = open(TEXT_FILES_PATH + "Feature2/" + filename.split('.')[0] + ".txt", "w")
 
-cv2.imwrite(filename, centroid_image)
-C = (cx, cy)
+for i in range(len(angles)):
+	splitImage = cv2.rectangle(bin_image, (rectangles[i][0][0], rectangles[i][0][1]), (rectangles[i][1][0], rectangles[i][1][1]), (0,0,0), 1)
+	centroidFile.write(str(centroids[i][0]) + ", " + str(centroids[i][1]) + "\n")
+	transitionsFile.write(str(transitions[i]) + "\n")
+	ratiosFile.write(str(ratios[i]) + "\n")
+	feature1File.write(str(normalized[i]) + "\n")
+	feature2File.write(str(angles[i]) + "\n")
 
-filename = filename.split('/')[-1]
-# Task 3
-filename = path + "seg_" + filename
-top_left, bottom_left, top_right, bottom_right, segmented_image = Task3.DivideBoundingBox(centroid_image, top, bottom, left, right, cx, cy)
-
-cv2.imwrite(filename, segmented_image)
-filename = filename.split('/')[-1]
-CleaningDirectories("../Text/")
-image = SplittingRecursive(bin_image, left, right, top, bottom, 0)
-cv2.imshow("image", image)
-filename = filename.split('/')[-1]
-filename = path + "final_" + filename
-cv2.imwrite(filename, image)
-
-cv2.waitKey(0)
+cv2.imwrite(path + filename.split('.')[0] + "_out.jpg", splitImage)
+centroidFile.close()
+transitionsFile.close()
+ratiosFile.close()
+feature1File.close()
+feature2File.close()

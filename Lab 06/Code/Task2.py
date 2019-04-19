@@ -4,16 +4,15 @@ Task 2: Finding Centroid
 """
 def FindCentroid(image, left, right, top, bottom):
 	cx, cy = 0, 0
-	n = 1
+	n = 0
 
-	for x in range(top, bottom):
-		for y in range(left, right):
-			if image[x, y] == 0:
+	for x in range(left, right):
+		for y in range(top, bottom):
+			if image[y, x] == 0:
 				cx = cx + x
 				cy = cy + y
 				n = n + 1
-
-	cx = cx // n
-	cy = cy // n
-
-	return cx, cy
+	if n == 0:
+		return ((left + right) // 2, (top + bottom) // 2, n)
+	else:
+		return (cx // n, cy // n, n)

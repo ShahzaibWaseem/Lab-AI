@@ -6,9 +6,9 @@ def BoundingBox(image, height, width):
 	left, right = width, 0
 	top, bottom = height, 0
 
-	for x in range(0, height):
-		for y in range(0, width):
-			color = image[x,y]
+	for x in range(width):
+		for y in range(height):
+			color = image[y, x]
 			if color == 0:
 				if x > right:
 					right = x
