@@ -72,7 +72,7 @@ def main():
 	loadVariables("Reference")
 	loadVariables("Questioned")
 	distancesFile = open("../Text/distances.csv", "w")
-	distancesFile.write("Reference Signature, Questioned Signature, Centroids, Transitions, Ratios, Black Pixels, Normalized, Angles, Normalized Blacks\n")
+	distancesFile.write("ReferenceSignature,QuestionedSignature,Centroids,Transitions,Ratios,BlackPixels,Normalized,Angles,NormalizedBlacks\n")
 	for reference_iterator in r_transitions.keys():
 		for questioned_iterator in q_transitions.keys():
 			centroidDistance = str( (euclideanDistance(r_centroids[reference_iterator][0], q_centroids[questioned_iterator][0]) + euclideanDistance(r_centroids[reference_iterator][1], q_centroids[questioned_iterator][1])) ** .5)
