@@ -82,7 +82,7 @@ def main():
 			normalizedDistance = str(euclideanDistance(r_normalized[reference_iterator], q_normalized[questioned_iterator]) ** .5)
 			anglesDistance = str(euclideanDistance(r_angles[reference_iterator], q_angles[questioned_iterator]) ** .5)
 			normalizedBlacksDistance = str(euclideanDistance(r_normalized_blacks[reference_iterator], q_normalized_blacks[questioned_iterator]) ** .5)
-			string = reference_iterator + ", " + questioned_iterator + ", " + centroidDistance + ", " + transitionDistance + ", " + ratioDistance + ", " + blackPixelsDistance + ", " + normalizedDistance + ", " + anglesDistance + ", " + normalizedBlacksDistance + "\n"
+			string = reference_iterator + "," + questioned_iterator + "," + centroidDistance + "," + transitionDistance + "," + ratioDistance + "," + blackPixelsDistance + "," + normalizedDistance + "," + anglesDistance + "," + normalizedBlacksDistance + "\n"
 			distancesFile.write(string)
 	distancesFile.close()
 
